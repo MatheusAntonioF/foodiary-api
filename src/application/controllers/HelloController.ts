@@ -1,9 +1,15 @@
-import type { IController } from "../contracts/Controller";
+import { Schema } from "../../kernel/decorators/Schema";
+import { Controller } from "../contracts/Controller";
 
-export class HelloController implements IController<unknown> {
+import { schema, type HelloBody } from "./schemas/helloSchema";
+
+@Schema(schema)
+export class HelloController extends Controller<unknown> {
+    protected override schema = schema;
+
     async handle(
-        request: IController.Request
-    ): Promise<IController.Response<unknown>> {
+        request: Controller.Request<HelloBody>
+    ): Promise<Controller.Response<unknown>> {
         return {
             statusCode: 200,
             body: { request },

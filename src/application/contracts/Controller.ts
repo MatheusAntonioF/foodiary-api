@@ -1,8 +1,31 @@
-export interface IController<TBody = undefined> {
-    handle(params: IController.Request): Promise<IController.Response<TBody>>;
+import { z } from "zod";
+import { getSchema } from "../../kernel/decorators/Schema";
+
+export abstract class Controller<TBody = undefined> {
+    protected schema?: z.ZodSchema;
+
+    protected abstract handle(
+        params: Controller.Request
+    ): Promise<Controller.Response<TBody>>;
+
+    public execute(
+        request: Controller.Request
+    ): Promise<Controller.Response<TBody>> {
+        const body = this.validateBody(request.body);
+
+        return this.handle({ ...request, body });
+    }
+
+    private validateBody(body: Controller.Request["body"]) {
+        const schema = getSchema(this);
+
+        if (!schema) return body;
+
+        return schema.parse(body);
+    }
 }
 
-export namespace IController {
+export namespace Controller {
     export type Request<
         TBody = Record<string, unknown>,
         TParams = Record<string, unknown>,
