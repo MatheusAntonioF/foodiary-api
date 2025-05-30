@@ -1,10 +1,12 @@
-import type { IHttpRequest } from "../contracts/HttpRequest";
+import type { IController } from "../contracts/Controller";
 
-export class HelloController {
-    async handle(request: IHttpRequest) {
+export class HelloController implements IController<unknown> {
+    async handle(
+        request: IController.Request
+    ): Promise<IController.Response<unknown>> {
         return {
             statusCode: 200,
-            body: "Hello from Lambda!",
+            body: { request },
         };
     }
 }
