@@ -1,0 +1,29 @@
+org: defaultdev
+service: foodiary-api
+
+provider:
+    name: aws
+    region: us-east-1
+    runtime: nodejs22.x
+    memorySize: 128
+
+package:
+    individually: true
+
+build:
+    esbuild:
+        bundle: true
+        minify: true
+        sourcemap: true
+        exclude:
+            - "@aws-sdk/*"
+        external:
+            - "@aws-sdk/*"
+
+functions:
+    hello:
+        handler: src/hello.handler
+        events:
+            - httpApi:
+                  path: /
+                  method: GET
