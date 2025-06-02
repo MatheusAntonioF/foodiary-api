@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "outDir": "dist",
         "noImplicitOverride": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
@@ -13,7 +14,8 @@
         "paths": {
             "@application/*": ["src/application/*"],
             "@kernel/*": ["src/kernel/*"],
-            "@main/*": ["src/main/*"]
+            "@main/*": ["src/main/*"],
+            "@shared/*": ["src/shared/*"]
         }
     }
 }

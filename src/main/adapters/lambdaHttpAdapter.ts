@@ -44,6 +44,8 @@ export function lambdaHttpAdapter(controller: Controller<unknown>) {
                 return lambdaErrorResponse(error);
             }
 
+            console.error(error);
+
             return lambdaErrorResponse({
                 statusCode: 500,
                 code: ErrorCode.INTERNAL_SERVER_ERROR,
