@@ -1,0 +1,40 @@
+Resources:
+    UserPool:
+        Type: AWS::Cognito::UserPool
+        Properties:
+            UserPoolName: ${self:service}-${self:provider.stage}-UserPool
+            # This flag will protect the resource from being delete from AWS when we run a sls remove, to remove all the resources from this application
+            # This is very useful to avoid human mistakes
+            DeletionProtection: INACTIVE
+            MfaConfiguration: OFF
+            AutoVerifiedAttributes:
+                - email
+            AdminCreateUserConfig:
+                AllowAdminCreateUserOnly: false
+            UsernameAttributes:
+                - email
+            AccountRecoverySetting:
+                RecoveryMechanisms:
+                    - Name: verified_email
+                      Priority: 1
+            Policies:
+                PasswordPolicy:
+                    MinimumLength: 8
+                    RequireLowercase: false
+                    RequireNumbers: false
+                    RequireSymbols: false
+                    RequireUppercase: false
+    UserPoolClient:
+        Type: AWS::Cognito::UserPoolClient
+        Properties:
+            ClientName: ${self:service}-${self:provider.stage}-UserPoolClient
+            UserPoolId: !Ref UserPool
+            ExplicitAuthFlows:
+                - ALLOW_USER_PASSWORD_AUTH
+            TokenValidityUnits:
+                AccessToken: hours
+            AccessTokenValidity: 12
+            RefreshTokenRotation:
+                Feature: ENABLED
+                # Define how much time a refresh token can be used after its generation
+                RetryGracePeriodSeconds: 0

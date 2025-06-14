@@ -6,6 +6,8 @@ provider:
     region: us-east-1
     runtime: nodejs22.x
     memorySize: 128
+    profile: dev.cloud
+    stage: ${opt:stage, 'dev'}
 
 package:
     individually: true
@@ -15,9 +17,7 @@ build:
         configFile: ./esbuild.config.mjs
 
 functions:
-    hello:
-        handler: src/main/functions/hello.handler
-        events:
-            - httpApi:
-                  path: /
-                  method: GET
+    - ${file(./sls/functions/auth.yml)}
+
+resources:
+    - ${file(./sls/resources/UserPool.yml)}
