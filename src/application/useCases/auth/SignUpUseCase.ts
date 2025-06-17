@@ -9,15 +9,19 @@ export class SignUpUseCase {
         email,
         password,
     }: SignUpUseCase.Input): Promise<SignUpUseCase.Output> {
-        const { externalId } = await this.authGateway.signUp({
+        await this.authGateway.signUp({
             email,
             password,
         });
-        console.log("🚀 ~ externalId:", externalId);
+
+        const { accessToken, refreshToken } = await this.authGateway.signIn({
+            email,
+            password,
+        });
 
         return {
-            accessToken: "asdfasdf",
-            refreshToken: "refresh-token-gerado",
+            accessToken,
+            refreshToken,
         };
     }
 }

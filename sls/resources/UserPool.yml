@@ -2,7 +2,7 @@ Resources:
     UserPool:
         Type: AWS::Cognito::UserPool
         Properties:
-            UserPoolName: ${self:service}-${self:provider.stage}-UserPool
+            UserPoolName: ${self:custom.cognito.PoolName}
             # This flag will protect the resource from being delete from AWS when we run a sls remove, to remove all the resources from this application
             # This is very useful to avoid human mistakes
             DeletionProtection: INACTIVE
@@ -31,6 +31,7 @@ Resources:
             UserPoolId: !Ref UserPool
             ExplicitAuthFlows:
                 - ALLOW_USER_PASSWORD_AUTH
+            GenerateSecret: true
             TokenValidityUnits:
                 AccessToken: hours
             AccessTokenValidity: 12

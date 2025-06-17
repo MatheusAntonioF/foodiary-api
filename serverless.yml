@@ -9,9 +9,15 @@ provider:
     profile: dev.cloud
     stage: ${opt:stage, 'dev'}
     environment: ${file(./sls/config/env.yml)}
+    iam:
+        role: ${file(./sls/config/role.yml)}
 
 package:
     individually: true
+
+custom:
+    cognito:
+        PoolName: ${self:service}-${self:provider.stage}-UserPool
 
 build:
     esbuild:
@@ -22,3 +28,4 @@ functions:
 
 resources:
     - ${file(./sls/resources/UserPool.yml)}
+    - ${file(./sls/resources/MainTable.yml)}
