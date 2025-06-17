@@ -8,6 +8,7 @@ provider:
     memorySize: 128
     profile: dev.cloud
     stage: ${opt:stage, 'dev'}
+    environment: ${file(./sls/config/env.yml)}
 
 package:
     individually: true
