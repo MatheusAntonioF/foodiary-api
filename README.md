@@ -23,6 +23,20 @@ When working with dynamo we need to set up the correct permissions in order to r
 
 Disclaimer: We need to set up a specific permission in the role just to run queries in the Global Secondary Indexes, only the default one with `dynamodb:Query` is not enough
 
+-   Cognito
+
+Cognito is a AWS service that provides a full process of authorization and authentication for applications. In order to work with it, we need to define User Pool and a User Pool Client.
+
+Cognito is also full integrated to other aws services, so if we have private routes for our web api, we can create a cognito authorizer that will act as a middleware as soon as as the api gateway receives a new request. The api gateway will not call the aws lambda directly, instead, it will call first the cognito authorizer to check if the credentials are available and valid before processing the request.
+
+Cognito has a internal feature called triggers that allow us to define custom lambdas that would be called once an event specific event happens there.
+
+## Terms
+
+-   claims
+
+The public payload we save into the JWT token
+
 ```
 # Both ways will work
 

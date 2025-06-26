@@ -17,6 +17,11 @@ Resources:
                 RecoveryMechanisms:
                     - Name: verified_email
                       Priority: 1
+            Schema:
+                - Name: internalId
+                  Required: false
+                  Mutable: false
+                  AttributeDataType: String
             Policies:
                 PasswordPolicy:
                     MinimumLength: 8
@@ -24,6 +29,24 @@ Resources:
                     RequireNumbers: false
                     RequireSymbols: false
                     RequireUppercase: false
+            LambdaConfig:
+                PreTokenGenerationConfig:
+                    # Serverless framework generates this name automatically for us
+                    # But this lambda is defined in the auth.yml
+                    # This is gonna work cause serverless framework uses the same cloud formation stack
+                    # When defining the lambda ARN using the GetAtt, the serverless will reject the deploy and throw a circular dependency error cause we are using the lambda ARN in the UserPool
+                    # LambdaArn: !GetAtt PreTokenGenerationLambdaFunction.Arn
+                    # To avoid that we need to define the lambda ARN manually
+                    LambdaArn: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-preTokenGenerationTrigger"
+                    LambdaVersion: V2_0
+    PreTokenGenerationLambdaPermission:
+        Type: AWS::Lambda::Permission
+        DependsOn: PreTokenGenerationTriggerLambdaFunction
+        Properties:
+            Action: lambda:InvokeFunction
+            FunctionName: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-preTokenGenerationTrigger"
+            Principal: cognito-idp.amazonaws.com
+            SourceArn: !GetAtt UserPool.Arn
     UserPoolClient:
         Type: AWS::Cognito::UserPoolClient
         Properties:

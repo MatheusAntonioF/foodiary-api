@@ -5,7 +5,7 @@ signUp:
               path: /auth/sign-up
               method: POST
 
-signin:
+signIn:
     handler: src/main/functions/auth/signIn.handler
     events:
         - httpApi:
@@ -20,3 +20,10 @@ preSignUpTrigger:
               trigger: PreSignUp
               existing: true
               forceDeploy: true
+              # this flag is required here to force the cloudformation stack to deploy this trigger and avoid issues with deprecated code
+
+# The trigger is configured manually to support event v2
+# Currently the serverless framework does not allow us to define a trigger for a v2 event
+# See UserPool.yml for more details
+preTokenGenerationTrigger:
+    handler: src/main/functions/auth/preTokenGenerationTrigger.handler
