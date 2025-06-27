@@ -63,7 +63,7 @@ export namespace AccountItem {
     export type Attributes = {
         id: string;
         email: string;
-        externalId: string;
+        externalId: string | undefined;
         createdAt: string;
     };
 
