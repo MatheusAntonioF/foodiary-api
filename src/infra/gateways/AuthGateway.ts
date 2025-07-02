@@ -1,4 +1,5 @@
 import {
+    ForgotPasswordCommand,
     GetTokensFromRefreshTokenCommand,
     InitiateAuthCommand,
     SignUpCommand,
@@ -89,6 +90,18 @@ export class AuthGateway {
         };
     }
 
+    async forgotPassword({
+        email,
+    }: AuthGateway.ForgotPasswordParams): Promise<void> {
+        const command = new ForgotPasswordCommand({
+            ClientId: this.appConfig.auth.cognito.clientId,
+            Username: email,
+            SecretHash: this.getSecretHash(email),
+        });
+
+        await cognitoClient.send(command);
+    }
+
     private getSecretHash(email: string) {
         return createHmac("SHA256", this.appConfig.auth.cognito.clientSecret)
             .update(`${email}${this.appConfig.auth.cognito.clientId}`)
@@ -119,5 +132,9 @@ export namespace AuthGateway {
     export type RefreshTokenResult = {
         accessToken: string;
         refreshToken: string;
+    };
+
+    export type ForgotPasswordParams = {
+        email: string;
     };
 }
