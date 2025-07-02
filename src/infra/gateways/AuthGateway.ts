@@ -1,4 +1,5 @@
 import {
+    ConfirmForgotPasswordCommand,
     ForgotPasswordCommand,
     GetTokensFromRefreshTokenCommand,
     InitiateAuthCommand,
@@ -90,6 +91,22 @@ export class AuthGateway {
         };
     }
 
+    async confirmForgotPassword({
+        confirmationCode,
+        email,
+        password,
+    }: AuthGateway.ConfirmForgotPasswordParams): Promise<void> {
+        const command = new ConfirmForgotPasswordCommand({
+            ClientId: this.appConfig.auth.cognito.clientId,
+            Username: email,
+            ConfirmationCode: confirmationCode,
+            Password: password,
+            SecretHash: this.getSecretHash(email),
+        });
+
+        await cognitoClient.send(command);
+    }
+
     async forgotPassword({
         email,
     }: AuthGateway.ForgotPasswordParams): Promise<void> {
@@ -136,5 +153,11 @@ export namespace AuthGateway {
 
     export type ForgotPasswordParams = {
         email: string;
+    };
+
+    export type ConfirmForgotPasswordParams = {
+        email: string;
+        confirmationCode: string;
+        password: string;
     };
 }

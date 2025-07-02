@@ -22,10 +22,17 @@ export class ForgotPasswordController extends Controller<
     }: Controller.Request<"public", ForgotPasswordBody>): Promise<
         Controller.Response<ForgotPasswordController.Response>
     > {
-        await this.forgotPasswordUseCase.execute({
-            email: body.email,
-        });
+        try {
+            await this.forgotPasswordUseCase.execute({
+                email: body.email,
+            });
+        } catch {
+            // throw new BadRequest("Failed. Try again.");
+        }
 
+        /**
+         * this prevents an attacker from guessing the email address by using a brute force attack
+         */
         return {
             statusCode: 204,
         };
