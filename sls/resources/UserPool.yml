@@ -39,6 +39,11 @@ Resources:
                     # To avoid that we need to define the lambda ARN manually
                     LambdaArn: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-preTokenGenerationTrigger"
                     LambdaVersion: V2_0
+            EmailConfiguration:
+                From: ${env:SES_EMAIL_FROM}
+                # 2 default values, COGNITO and DEVELOPER. COGNITO is the SES internal instance from aws and DEVELOPER is the one we can set up by ourselves
+                EmailSendingAccount: DEVELOPER
+                SourceArn: !Sub "arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/${env:SES_EMAIL_FROM}"
     PreTokenGenerationLambdaPermission:
         Type: AWS::Lambda::Permission
         DependsOn: PreTokenGenerationTriggerLambdaFunction

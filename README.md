@@ -2,19 +2,19 @@
 
 ## What I have learned so far
 
--   Decorator design pattern
+- Decorator design pattern
 
 This design pattern allow us to abstract behavior and encapsulate it to be reused across the whole application.
 In order to work with it, we need to install a dependency called `reflect-metadata` and we need to update some settings in the `tsconfig.json`. Since we are compiling the code with esbuild and it does not generate the internal metadata for us we need to add two more settings in the tsconfig, they are:
 
--   experimentalDecorators
--   emitDecoratorMetadata
+- experimentalDecorators
+- emitDecoratorMetadata
 
 Those settings make tsc generate the metadata to be used during the runtime
 
 Disclaimer: by default, esbuild does not generate the metadata so since we are using it to compile the code we need to provide a custom settings that is gonna extend our tsconfig, check the file `esbuild.config.mjs`
 
--   Working with dynamo db
+- Working with dynamo db
 
 Dynamo is excellent tool to work with serverless specially with aws lambdas. It provides a stateless connection using http protocol instead of UTP which is a persistent protocol (stateful). To Work with dynamo is important to have a good strategy and a well defined access pattern
 so we can create the Global secondary indexes to get all the values we need with less queries as possible.
@@ -23,7 +23,7 @@ When working with dynamo we need to set up the correct permissions in order to r
 
 Disclaimer: We need to set up a specific permission in the role just to run queries in the Global Secondary Indexes, only the default one with `dynamodb:Query` is not enough
 
--   Cognito
+- Cognito
 
 Cognito is a AWS service that provides a full process of authorization and authentication for applications. In order to work with it, we need to define User Pool and a User Pool Client.
 
@@ -31,9 +31,13 @@ Cognito is also full integrated to other aws services, so if we have private rou
 
 Cognito has a internal feature called triggers that allow us to define custom lambdas that would be called once an event specific event happens there.
 
+Cognito has a limitation related to send emails. Cognito allow only 50 email messages sent daily per AWS Account in the default configuration. It's not viable to go to production with this limitation
+
+In order to send this to production we need to move the SES service from sandbox to production (send an email to aws) and then we can set up a identity as a custom domain to send the emails or an email
+
 ## Terms
 
--   claims
+- claims
 
 The public payload we save into the JWT token
 
@@ -46,15 +50,15 @@ The public payload we save into the JWT token
 
 ### Scripts
 
--   Deploy
+- Deploy
 
 `sls deploy`
 
--   Deploy function
+- Deploy function
 
 `sls deploy function -f <function_name>`
 
--   Check cloudwatch logs
+- Check cloudwatch logs
 
 `sls logs -f <function_name> -t`
 
