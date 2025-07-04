@@ -1,13 +1,12 @@
 import React from "react";
 
-import {
-    Column,
-    Heading,
-    Html,
-    Row,
-    Section,
-    Text,
-} from "@react-email/components";
+import { Column } from "@react-email/column";
+import { Heading } from "@react-email/heading";
+import { Html } from "@react-email/html";
+import { Row } from "@react-email/row";
+import { Section } from "@react-email/section";
+import { Text } from "@react-email/text";
+
 import { TailwindConfig } from "../components/TailwindConfig";
 
 interface ForgotPasswordProps {
