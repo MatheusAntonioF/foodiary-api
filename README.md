@@ -37,6 +37,23 @@ In order to send this to production we need to move the SES service from sandbox
 
 ### How to set up a custom domain for the api
 
+    Creating a condition to only set the custom domain when we have the environment variables (production environment)
+
+    `sls/resources/APIGWCustomDomain.yml`
+
+        ```
+            Conditions:
+                ShouldSetupCustomDomain: !And
+                    - !Not
+                        - !Equals
+                            - ${env:API_DOMAIN_NAME, ''}
+                            - ''
+                    - !Not
+                        - !Equals
+                            - ${env:ROUTE53_HOSTED_ZONE_ID, ''}
+                            - ''
+        ```
+
     - Create a SSL certificate using ACM (AWS Certificate Manager)
 
         This service has no cost, it's totally free for public SSL certificates
@@ -51,6 +68,7 @@ In order to send this to production we need to move the SES service from sandbox
         ```
             Resources:
                 APIGWCustomDomainCertificate:
+                    Condition: ShouldSetupCustomDomain
                     Type: AWS::CertificateManager::Certificate
                     Properties:
                         # This can be converted into an environment variable to set it based on the environment (dev, qa, prod, and etc...)
@@ -74,6 +92,7 @@ In order to send this to production we need to move the SES service from sandbox
         ```
             Resources:
                 APIGWCustomDomain:
+                    Condition: ShouldSetupCustomDomain
                     Type: AWS::ApiGatewayV2::DomainName
                     Properties:
                         DomainName: api.foodiary.com.br
@@ -93,6 +112,7 @@ In order to send this to production we need to move the SES service from sandbox
         ```
             Resources:
                 APIGWCustomDomainApiMapping:
+                    Condition: ShouldSetupCustomDomain
                     Type: AWS::ApiGatewayV2::ApiMapping
                     Properties:
                         # This is a service created internally by the serverless framework when we declare a lambda with a httpApi trigger
@@ -111,6 +131,7 @@ In order to send this to production we need to move the SES service from sandbox
         ```
             Resources:
                 APIGWCustomDomainDNSRecord:
+                    Condition: ShouldSetupCustomDomain
                     Type: AWS::Route53::RecordSet
                     Properties:
                         Name: !Ref APIGWCustomDomain
