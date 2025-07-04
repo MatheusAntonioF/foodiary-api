@@ -67,5 +67,5 @@ export namespace AccountItem {
         createdAt: string;
     };
 
-    export type ItemType = Keys & Attributes & { type: string };
+    export type ItemType = Keys & Attributes & { type: "Account" };
 }
