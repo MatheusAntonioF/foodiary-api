@@ -11,6 +11,7 @@
         "strict": true,
         "skipLibCheck": true,
         "baseUrl": ".",
+        "jsx": "react",
         "paths": {
             "@application/*": ["src/application/*"],
             "@kernel/*": ["src/kernel/*"],
