@@ -16,6 +16,7 @@ export const signUpSchema = z.object({
             .date("birthDate should be a valid date (yyyy-mm-dd)")
             .transform((date) => new Date(date)),
         gender: z.nativeEnum(Profile.Gender),
+        goal: z.nativeEnum(Profile.Goal),
         height: z.number(),
         weight: z.number(),
         activityLevel: z.nativeEnum(Profile.ActivityLevel),
