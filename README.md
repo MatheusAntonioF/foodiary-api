@@ -142,6 +142,11 @@ In order to send this to production we need to move the SES service from sandbox
                             DNSName: !GetAtt APIGWCustomDomain.RegionalDomainName
         ```
 
+### CQRS - Command(Mutation) Query Responsibility Segregation
+
+The core of this design pattern is to segregate the query operations and the mutation operations (command in the pattern name). This comes as a solution cause we are working with the Repository pattern which takes only one entity to persist it in the database, so we should have a repository per entity in the application. However, there are some use cases where we need to read data from the database from more than one entity at the same time (with a join for example) which breaks the principe to have one repository per entity cause we gonna have a repository that is aware of handling 2 entities or more. The CQRS comes to separate the mutations (repository pattern) and the queries.
+In addition to that, when we are querying the data the repository should create an entity from that data to be used in the domain so if we are listing the users from the database for example, for each user we gonna create a new instance of the user - `new User(databaseUser)`. This increases the resources usage of our application
+
 ## Terms
 
 - claims
