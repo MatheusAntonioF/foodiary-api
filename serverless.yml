@@ -39,3 +39,4 @@ functions:
 resources:
     - ${file(./sls/resources/UserPool.yml)}
     - ${file(./sls/resources/MainTable.yml)}
+    - ${file(./sls/resources/MealsBucket.yml)}
