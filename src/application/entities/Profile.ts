@@ -5,8 +5,8 @@ export class Profile {
     gender: Profile.Gender;
     height: number;
     weight: number;
-    activityLevel: Profile.ActivityLevel;
-    goal: Profile.Goal;
+    readonly activityLevel: Profile.ActivityLevel;
+    readonly goal: Profile.Goal;
     readonly createdAt: Date;
 
     constructor(attr: Profile.Attributes) {
