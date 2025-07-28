@@ -4,3 +4,52 @@ Resources:
         DeletionPolicy: Retain
         Properties:
             BucketName: ${self:service}-${self:provider.stage}-meals-bucket-1
+    MealsCDNOAC:
+        Type: AWS::CloudFront::OriginAccessControl
+        Properties:
+            OriginAccessControlConfig:
+                Name: MealsCDNOAC
+                Description: OAC for MealsBucket
+                OriginAccessControlOriginType: s3
+                SigningBehavior: always
+                SigningProtocol: sigv4
+    MealsBucketCDN:
+        Type: AWS::CloudFront::Distribution
+        Properties:
+            DistributionConfig:
+                Enabled: true
+                HttpVersion: http2and3
+                ViewerCertificate:
+                    CloudFrontDefaultCertificate: true
+                Origins:
+                    - Id: S3Origin
+                      S3OriginConfig: {}
+                      DomainName: !GetAtt MealsBucket.RegionalDomainName
+                      OriginAccessControlId: !Ref MealsCDNOAC
+                DefaultCacheBehavior:
+                    TargetOriginId: S3Origin
+                    Compress: true
+                    ViewerProtocolPolicy: redirect-to-https
+                    AllowedMethods:
+                        - GET
+                        - HEAD
+                    # AWS managed cache policy
+                    # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html#managed-cache-caching-optimized
+                    CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+    MealsBucketCDNPolicy:
+        Type: AWS::S3::BucketPolicy
+        Properties:
+            Bucket: !Ref MealsBucket
+            PolicyDocument:
+                Version: "2008-10-17"
+                Id: PolicyForCloudFrontPrivateContent
+                Statement:
+                    - Sid: AllowCloudFrontServicePrincipal
+                      Effect: Allow
+                      Principal:
+                          Service: cloudfront.amazonaws.com
+                      Action: s3:GetObject
+                      Resource: !Sub "${MealsBucket.Arn}/*"
+                      Condition:
+                          StringEquals:
+                              AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${MealsBucketCDN}
