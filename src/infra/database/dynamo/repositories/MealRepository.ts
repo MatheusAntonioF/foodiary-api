@@ -1,6 +1,7 @@
 import {
     GetCommand,
     PutCommand,
+    UpdateCommand,
     type PutCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { dynamoClient } from "@infra/clients/dynamoClient";
@@ -30,6 +31,43 @@ export class MealRepository {
         if (!mealItem) return null;
 
         return MealItem.toEntity(mealItem as MealItem.ItemType);
+    }
+
+    async save(meal: Meal) {
+        const mealItem = MealItem.fromEntity(meal).toItem();
+
+        const command = new UpdateCommand({
+            TableName: this.appConfig.db.dynamodb.mainTableName,
+            Key: {
+                PK: mealItem.PK,
+                SK: mealItem.SK,
+            },
+            UpdateExpression: `
+                    SET
+                    #status = :status,
+                    #attempts = :attempts,
+                    #name = :name,
+                    #icon = :icon,
+                    #foods = :foods
+                `,
+            ExpressionAttributeNames: {
+                "#status": "status",
+                "#attempts": "attempts",
+                "#name": "name",
+                "#icon": "icon",
+                "#foods": "foods",
+            },
+            ExpressionAttributeValues: {
+                ":status": mealItem.status,
+                ":attempts": mealItem.attempts,
+                ":name": mealItem.name,
+                ":icon": mealItem.icon,
+                ":foods": mealItem.foods,
+            },
+            ReturnValues: "NONE",
+        });
+
+        await dynamoClient.send(command);
     }
 
     getPutCommandInput(meal: Meal): PutCommandInput {

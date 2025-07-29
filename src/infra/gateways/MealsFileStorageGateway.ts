@@ -4,6 +4,7 @@ import { Meal } from "@application/entities/Meal";
 import { Injectable } from "@kernel/decorators/Injectable";
 import { s3Client } from "@infra/clients/s3Client";
 import { AppConfig } from "@shared/config/AppConfig";
+import { HeadObjectCommand } from "@aws-sdk/client-s3";
 
 @Injectable()
 export class MealsFileStorageGateway {
@@ -67,6 +68,26 @@ export class MealsFileStorageGateway {
             uploadSignature,
         };
     }
+
+    async getFileMetadata({
+        fileKey,
+    }: MealsFileStorageGateway.GetFileMetadataParams): Promise<MealsFileStorageGateway.GetFileMetadataResult> {
+        const command = new HeadObjectCommand({
+            Bucket: this.appConfig.storage.mealsBucket,
+            Key: fileKey,
+        });
+
+        const { Metadata = {} } = await s3Client.send(command);
+
+        if (!Metadata.accountid || !Metadata.mealid) {
+            throw new Error(`File ${fileKey} has no metadata`);
+        }
+
+        return {
+            accountId: Metadata.accountid,
+            mealId: Metadata.mealid,
+        };
+    }
 }
 
 export namespace MealsFileStorageGateway {
@@ -87,5 +108,14 @@ export namespace MealsFileStorageGateway {
 
     export type CreatePOSTResult = {
         uploadSignature: string;
+    };
+
+    export type GetFileMetadataParams = {
+        fileKey: string;
+    };
+
+    export type GetFileMetadataResult = {
+        accountId: string;
+        mealId: string;
     };
 }
