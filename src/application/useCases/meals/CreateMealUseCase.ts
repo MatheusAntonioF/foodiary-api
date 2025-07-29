@@ -30,6 +30,7 @@ export class CreateMealUseCase {
             await this.mealRepository.create(meal),
             await this.mealsFileStorageGateway.createPOST({
                 mealId: meal.id,
+                accountId,
                 file: {
                     fileKey: inputFileKey,
                     fileSize: file.size,
