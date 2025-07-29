@@ -6,6 +6,8 @@ export const envSchema = z.object({
     MAIN_TABLE_NAME: z.string().min(1),
     COGNITO_POOL_ID: z.string().min(1),
     MEALS_BUCKET_NAME: z.string().min(1),
+
+    MEALS_CDN_DOMAIN_NAME: z.string().min(1),
 });
 
 function getEnv() {
