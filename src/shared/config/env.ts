@@ -8,6 +8,7 @@ export const envSchema = z.object({
     MEALS_BUCKET_NAME: z.string().min(1),
 
     MEALS_CDN_DOMAIN_NAME: z.string().min(1),
+    MEALS_QUEUE_URL: z.string().min(1),
 });
 
 function getEnv() {

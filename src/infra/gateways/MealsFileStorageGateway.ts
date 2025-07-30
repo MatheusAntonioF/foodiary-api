@@ -22,7 +22,7 @@ export class MealsFileStorageGateway {
     }
 
     getFileURL(fileKey: string) {
-        const cdn = this.appConfig.cdn.mealsCDN;
+        const cdn = this.appConfig.cdns.mealsCDN;
 
         return `https://${cdn}/${fileKey}`;
     }

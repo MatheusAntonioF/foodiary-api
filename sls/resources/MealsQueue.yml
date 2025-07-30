@@ -1,0 +1,20 @@
+Resources:
+    MealsQueue:
+        Type: AWS::SQS::Queue
+        Properties:
+            QueueName: ${self:service}-${self:provider.stage}-MealsQueue
+            # SQS will turn a message invisible when the consumer receives it
+            # If the consumer does not reply before the VisibilityTimeout
+            # SQS makes this message visible again for other consumes
+            VisibilityTimeout: 130 # 2 minutes and 10 seconds
+            # time the sqs keeps the request from the consumer to get a message to process
+            ReceiveMessageWaitTimeSeconds: 20
+            RedrivePolicy:
+                maxReceiveCount: 2
+                deadLetterTargetArn: !GetAtt MealsDLQ.Arn
+
+    MealsDLQ:
+        Type: AWS::SQS::Queue
+        Properties:
+            QueueName: ${self:service}-${self:provider.stage}-MealsDLQ
+            MessageRetentionPeriod: 1209600 # 14 days
