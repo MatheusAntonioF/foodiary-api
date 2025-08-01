@@ -1,0 +1,26 @@
+Resources:
+    DLQAlarmTopic:
+        Type: AWS::SNS::Topic
+        Properties:
+            TopicName: ${self:service}-${self:provider.stage}-DLQAlarmTopic
+            Subscription:
+                - Protocol: email
+                  Endpoint: ${env:DLQ_ALARM_EMAIL}
+    MealsDLQAlarm:
+        Type: AWS::CloudWatch::Alarm
+        Properties:
+            AlarmName: ${self:service}-${self:provider.stage}-MealsDLQAlarm
+            AlarmDescription: Triggered when messages are found in MealsDLQ
+            Namespace: AWS/SQS
+            MetricName: ApproximateNumberOfMessagesVisible
+            Dimensions:
+                - Name: QueueName
+                  Value: !GetAtt MealsDLQ.QueueName
+            Statistic: Average
+            Period: 60 # 1 minute in seconds
+            EvaluationPeriods: 1
+            ComparisonOperator: GreaterThanThreshold
+            Threshold: 0
+            TreatMissingData: notBreaching
+            AlarmActions:
+                - !Ref DLQAlarmTopic

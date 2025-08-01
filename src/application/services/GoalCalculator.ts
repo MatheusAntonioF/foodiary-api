@@ -1,5 +1,8 @@
 import { Profile } from "@application/entities/Profile";
 
+/**
+ * Harris-Benedict formula
+ */
 export class GoalCalculator {
     private static macroRatios: Record<
         Profile.Goal,
