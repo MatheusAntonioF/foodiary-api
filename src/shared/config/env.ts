@@ -9,6 +9,8 @@ export const envSchema = z.object({
 
     MEALS_CDN_DOMAIN_NAME: z.string().min(1),
     MEALS_QUEUE_URL: z.string().min(1),
+
+    OPENAI_API_KEY: z.string().min(1),
 });
 
 function getEnv() {
