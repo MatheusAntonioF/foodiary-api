@@ -10,7 +10,7 @@ const MAX_ATTEMPTS = 2;
 export class ProcessMealUseCase {
     constructor(
         private readonly mealRepository: MealRepository,
-        private readonly mealsAIGateway: MealsAIGateway,
+        private readonly mealsAIGateway: MealsAIGateway
     ) {}
 
     async execute({
@@ -39,8 +39,9 @@ export class ProcessMealUseCase {
 
             await this.mealRepository.save(meal);
 
-            const { name, icon, foods } =
-                await this.mealsAIGateway.processMeal(meal);
+            const { name, icon, foods } = await this.mealsAIGateway.processMeal(
+                meal
+            );
 
             meal.status = Meal.Status.SUCCESS;
             meal.name = name;

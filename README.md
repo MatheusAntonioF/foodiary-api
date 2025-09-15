@@ -7,8 +7,8 @@
 This design pattern allow us to abstract behavior and encapsulate it to be reused across the whole application.
 In order to work with it, we need to install a dependency called `reflect-metadata` and we need to update some settings in the `tsconfig.json`. Since we are compiling the code with esbuild and it does not generate the internal metadata for us we need to add two more settings in the tsconfig, they are:
 
-- experimentalDecorators
-- emitDecoratorMetadata
+-   experimentalDecorators
+-   emitDecoratorMetadata
 
 Those settings make tsc generate the metadata to be used during the runtime
 
@@ -147,9 +147,22 @@ In order to send this to production we need to move the SES service from sandbox
 The core of this design pattern is to segregate the query operations and the mutation operations (command in the pattern name). This comes as a solution cause we are working with the Repository pattern which takes only one entity to persist it in the database, so we should have a repository per entity in the application. However, there are some use cases where we need to read data from the database from more than one entity at the same time (with a join for example) which breaks the principe to have one repository per entity cause we gonna have a repository that is aware of handling 2 entities or more. The CQRS comes to separate the mutations (repository pattern) and the queries.
 In addition to that, when we are querying the data the repository should create an entity from that data to be used in the domain so if we are listing the users from the database for example, for each user we gonna create a new instance of the user - `new User(databaseUser)`. This increases the resources usage of our application
 
+### How OpenAI calculates the cost to process and Image?
+
+To calculate how much an image cost to be processed, OpenAI calculates the number of 32px x 32px patches that are needed to fully cover the image
+
+```
+raw_patches = ceil(width/32) x ceil(height/32)
+```
+
+> Check OpenAI Cookbook to learn more about prompt engineering
+> https://cookbook.openai.com/
+
+---
+
 ## Terms
 
-- claims
+-   claims
 
 The public payload we save into the JWT token
 
@@ -162,15 +175,15 @@ The public payload we save into the JWT token
 
 ### Scripts
 
-- Deploy
+-   Deploy
 
 `sls deploy`
 
-- Deploy function
+-   Deploy function
 
 `sls deploy function -f <function_name>`
 
-- Check cloudwatch logs
+-   Check cloudwatch logs
 
 `sls logs -f <function_name> -t`
 
