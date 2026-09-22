@@ -4,6 +4,16 @@ Resources:
         DeletionPolicy: Retain
         Properties:
             BucketName: ${self:service}-${self:provider.stage}-meals-bucket-1
+            # The web client uploads straight to S3 with the pre-signed POST, so the bucket
+            # needs its own CORS rule — the API's does not cover it.
+            CorsConfiguration:
+                CorsRules:
+                    - AllowedOrigins: ${self:custom.corsOrigins.${self:provider.stage}, self:custom.corsOrigins.dev}
+                      AllowedMethods:
+                          - POST
+                      AllowedHeaders:
+                          - "*"
+                      MaxAge: 3600
     MealsCDNOAC:
         Type: AWS::CloudFront::OriginAccessControl
         Properties:

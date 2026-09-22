@@ -12,6 +12,21 @@ provider:
     iam:
         role: ${file(./sls/config/role.yml)}
     httpApi:
+        # Browsers refuse cross-origin calls without these. The React Native app never needed
+        # them because native HTTP is not subject to CORS; the web client is.
+        cors:
+            allowedOrigins: ${self:custom.corsOrigins.${self:provider.stage}, self:custom.corsOrigins.dev}
+            allowedHeaders:
+                - Content-Type
+                - Authorization
+            # the only verbs the client uses — POST /auth/*, /meals; GET /me, /meals;
+            # PUT /profiles, /goals
+            allowedMethods:
+                - GET
+                - POST
+                - PUT
+                - OPTIONS
+            maxAge: 86400
         authorizers:
             CognitoAuthorizer:
                 type: jwt
@@ -26,6 +41,21 @@ package:
 custom:
     cognito:
         PoolName: ${self:service}-${self:provider.stage}-UserPool
+
+    # Origins allowed to call the API and upload to the meals bucket from a browser.
+    # The web client sends its JWT in an Authorization header rather than a cookie, so
+    # allowCredentials stays off — but the list is still explicit rather than "*", so an
+    # arbitrary site cannot script the API against a signed-in user.
+    # Serverless resolves every stage's value eagerly, so prod cannot be left undefined —
+    # set WEB_APP_ORIGIN to the deployed web app's origin before deploying that stage. Left
+    # unset it resolves to an unroutable .invalid host, so the browser simply refuses the
+    # request instead of the API quietly trusting something it should not.
+    corsOrigins:
+        dev:
+            - http://localhost:5173 # vite dev
+            - http://localhost:4173 # vite preview
+        prod:
+            - ${env:WEB_APP_ORIGIN, 'https://set-WEB_APP_ORIGIN.invalid'}
 
 build:
     esbuild:
