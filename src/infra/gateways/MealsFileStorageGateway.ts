@@ -12,9 +12,9 @@ export class MealsFileStorageGateway {
 
     static generateInputFileKey({
         accountId,
-        inputType,
+        contentType,
     }: MealsFileStorageGateway.GenerateInputFileKeyParams) {
-        const extension = inputType === Meal.InputType.AUDIO ? "m4a" : "jpeg";
+        const extension = Meal.inputFileExtensions[contentType];
 
         const filename = `${KSUID.randomSync().string}.${extension}`;
 
@@ -30,11 +30,9 @@ export class MealsFileStorageGateway {
     async createPOST({
         mealId,
         accountId,
-        file: { fileKey, fileSize, inputType },
+        file: { fileKey, fileSize, contentType },
     }: MealsFileStorageGateway.CreatePOSTParams): Promise<MealsFileStorageGateway.CreatePOSTResult> {
         const bucket = this.appConfig.storage.mealsBucket;
-        const contentType =
-            inputType === Meal.InputType.AUDIO ? "audio/m4a" : "image/jpeg";
 
         const FIVE_MINUTES_IN_SECS = 5 * 60;
 
@@ -93,7 +91,7 @@ export class MealsFileStorageGateway {
 export namespace MealsFileStorageGateway {
     export type GenerateInputFileKeyParams = {
         accountId: string;
-        inputType: Meal.InputType;
+        contentType: Meal.InputFileContentType;
     };
 
     export type CreatePOSTParams = {
@@ -102,7 +100,7 @@ export namespace MealsFileStorageGateway {
         file: {
             fileKey: string;
             fileSize: number;
-            inputType: Meal.InputType;
+            contentType: Meal.InputFileContentType;
         };
     };
 

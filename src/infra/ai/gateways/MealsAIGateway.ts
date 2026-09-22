@@ -59,7 +59,10 @@ export class MealsAIGateway {
             });
         }
 
-        const transcription = await this.transcribe(mealFileUrl);
+        const transcription = await this.transcribe(
+            mealFileUrl,
+            meal.inputFileKey,
+        );
 
         return this.callAI({
             mealId: meal.id,
@@ -71,12 +74,21 @@ export class MealsAIGateway {
         });
     }
 
-    private async transcribe(audioFileUrl: string) {
+    private async transcribe(audioFileUrl: string, fileKey: string) {
         const audioFile = await downloadFileFromURL(audioFileUrl);
+
+        /**
+         * The name and type must describe the bytes: the model infers the container from them,
+         * and an m4a label on a webm recording is not something it can recover from.
+         */
+        const contentType = Meal.getContentTypeFromFileKey(fileKey);
+        const extension = Meal.inputFileExtensions[contentType];
 
         const { text } = await this.client.audio.transcriptions.create({
             model: "gpt-4o-mini-transcribe",
-            file: await toFile(audioFile, "audio.m4a", { type: "audio/m4a" }),
+            file: await toFile(audioFile, `audio.${extension}`, {
+                type: contentType,
+            }),
         });
 
         return text;
