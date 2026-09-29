@@ -20,7 +20,7 @@ provider:
                 - Content-Type
                 - Authorization
             # the only verbs the client uses — POST /auth/*, /meals; GET /me, /meals;
-            # PUT /profiles, /goals
+            # PUT /profiles, /goals, /meals/{mealId}
             allowedMethods:
                 - GET
                 - POST

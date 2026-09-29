@@ -22,6 +22,14 @@ getMealById:
               path: /meals/{mealId}
               authorizer:
                   name: CognitoAuthorizer
+updateMeal:
+    handler: src/main/functions/meals/updateMeal.handler
+    events:
+        - httpApi:
+              method: PUT
+              path: /meals/{mealId}
+              authorizer:
+                  name: CognitoAuthorizer
 onMealFileUploaded:
     handler: src/main/functions/meals/onMealFileUploaded.handler
     events:
